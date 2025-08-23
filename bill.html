@@ -1,0 +1,1162 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sun Enterprises - Transaction Tracker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0052cc;
+      --primary-dark: #003e9a;
+      --success: #2ecc71;
+      --success-dark: #27ae60;
+      --danger: #e74c3c;
+      --danger-dark: #c0392b;
+      --warning: #f39c12;
+      --text: #333;
+      --text-light: #555;
+      --bg: #f7f9fc;
+      --card-bg: #fff;
+      --border: #ddd;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      --hover-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      --table-hover: #dde6f7;
+      --table-even: #f9f9f9;
+      --total-bg: #e3f2fd;
+    }
+
+    .dark-mode {
+      --primary: #5d9cec;
+      --primary-dark: #4a89dc;
+      --text: #e0e0e0;
+      --text-light: #bbb;
+      --bg: #1a1a1a;
+      --card-bg: #2d2d2d;
+      --border: #444;
+      --table-hover: #3c3c3c;
+      --table-even: #333;
+      --total-bg: #3a3a4a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s ease, color 0.3s ease;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: var(--hover-shadow);
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 25px 30px;
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+    }
+
+    .dark-mode-toggle {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .form-section {
+      padding: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border: 1.8px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.2);
+      background: #f8f9ff;
+    }
+
+    /* Remove spinners */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 25px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+
+    button.primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 3px 10px rgba(0, 82, 204, 0.4);
+    }
+
+    button.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    button.success {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 3px 10px rgba(46, 204, 113, 0.4);
+    }
+
+    button.success:hover {
+      background: var(--success-dark);
+    }
+
+    button.danger {
+      background: var(--danger);
+      color: white;
+      box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);
+    }
+
+    button.danger:hover {
+      background: var(--danger-dark);
+    }
+
+    button.warning {
+      background: var(--warning);
+      color: white;
+      box-shadow: 0 3px 10px rgba(243, 156, 18, 0.4);
+    }
+
+    button.warning:hover {
+      background: #e67e22;
+    }
+
+    .month-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .month-nav button {
+      background: #f0f2f5;
+      color: #555;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .month-nav button.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .search-container {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .search-container input {
+      padding-left: 40px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #777;
+    }
+
+    .bill {
+      padding: 30px;
+      margin-top: 0;
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 1px 10px rgba(0, 0, 0, 0.07);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    thead {
+      background: var(--primary);
+      color: white;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:hover {
+      background: var(--table-hover);
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--table-even);
+    }
+
+    .total-row td {
+      font-weight: 700;
+      background: var(--total-bg);
+      font-size: 1.1rem;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btns button {
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      border-radius: 4px;
+    }
+
+    .edit-btn { background: var(--warning); color: white; }
+    .delete-btn { background: var(--danger); color: white; }
+    .details-btn { background: var(--primary); color: white; }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-light);
+      padding: 30px;
+      font-style: italic;
+    }
+
+    .toast {
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      padding: 15px 25px;
+      background: #333;
+      color: white;
+      border-radius: 6px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.3s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text);
+    }
+
+    .transaction-details {
+      margin-top: 20px;
+    }
+
+    .detail-item {
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .detail-item:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      color: var(--text);
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 10px 0;
+    }
+
+    .stat-label {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .container, .container * {
+        visibility: visible;
+      }
+      .container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      header, .form-section, .month-nav, .buttons, .search-container, .action-btns {
+        display: none;
+      }
+      .bill {
+        padding: 10px;
+      }
+      table, th, td {
+        border: 1px solid black !important;
+      }
+      thead {
+        background: black !important;
+        color: white !important;
+      }
+      .total-row td {
+        background: #f0f0f0 !important;
+      }
+      @page {
+        margin: 0.5cm;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .form-section, .bill {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      .buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      button {
+        width: 100%;
+        max-width: 250px;
+      }
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Sun Enterprises</h1>
+      <button class="dark-mode-toggle" id="darkModeToggle">🌙 Dark Mode</button>
+    </header>
+
+    <section class="form-section">
+      <form id="transactionForm">
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input type="text" id="name" placeholder="Enter customer name" required autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label for="amount">Amount (₹) *</label>
+          <input type="number" id="amount" placeholder="0.00" min="0" step="0.01" required>
+        </div>
+
+        <div class="form-group">
+          <label for="date">Date *</label>
+          <input type="date" id="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="paymentMode">Payment Mode *</label>
+          <select id="paymentMode" required>
+            <option value="" disabled selected>Choose mode</option>
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="UPI">UPI</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <!-- Dynamic Fields -->
+        <div id="cardDetails" class="form-group hidden">
+          <label for="cardBankName">Bank Name</label>
+          <input type="text" id="cardBankName" placeholder="Enter bank name">
+        </div>
+
+        <div id="bankTransferDetails" class="hidden">
+          <div class="form-group">
+            <label for="bankTransferName">Bank Name</label>
+            <input type="text" id="bankTransferName" placeholder="Enter bank name">
+          </div>
+          <div class="form-group">
+            <label for="bankTransferBranch">Branch</label>
+            <input type="text" id="bankTransferBranch" placeholder="Enter branch">
+          </div>
+          <div class="form-group">
+            <label for="bankTransferAccount">Account Number</label>
+            <input type="text" id="bankTransferAccount" placeholder="Enter account number">
+          </div>
+        </div>
+
+        <div id="upiDetails" class="form-group hidden">
+          <label for="upiId">UPI ID</label>
+          <input type="text" id="upiId" placeholder="e.g. user@upi">
+        </div>
+
+        <div id="otherDetails" class="form-group hidden">
+          <label for="otherPaymentDetails">Payment Details</label>
+          <input type="text" id="otherPaymentDetails" placeholder="Enter payment details">
+        </div>
+
+        <div class="form-group">
+          <label for="notes">Notes (Optional)</label>
+          <textarea id="notes" placeholder="Add any additional notes" rows="3"></textarea>
+        </div>
+
+        <div class="buttons">
+          <button type="submit" class="primary">Submit</button>
+          <button type="button" class="success" onclick="window.print()">🖨 Print</button>
+          <button type="button" class="warning" id="exportBtn">📤 Export CSV</button>
+          <button type="button" class="danger" id="clearBtn">🗑 Clear All</button>
+        </div>
+      </form>
+
+      <div class="month-nav" id="monthNav">
+        <button id="prevMonthBtn">⬅ Prev Month</button>
+        <button id="currentMonthBtn" class="active">📅 Current Month</button>
+        <button id="nextMonthBtn">Next Month ➡</button>
+        <button id="yearBtn">
+          <span style="display: flex; align-items: center; justify-content: center; gap: 6px;">📅 <span>Yearly</span></span>
+        </button>
+      </div>
+    </section>
+
+    <section class="bill">
+      <h2>Transactions</h2>
+      
+      <div class="stats-container" id="statsContainer">
+        <!-- Stats will be populated by JavaScript -->
+      </div>
+      
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search transactions...">
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Amount (₹)</th>
+            <th>Date</th>
+            <th>Payment Mode</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="transactionList">
+          <tr><td colspan="5" class="empty-state">No transactions yet.</td></tr>
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td colspan="1" style="text-align:right;">Total:</td>
+            <td id="totalAmount" colspan="4">₹0.00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </section>
+  </div>
+
+  <div class="toast" id="toast">Action completed!</div>
+
+  <div class="modal" id="detailsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Transaction Details</h3>
+        <button class="close-modal" id="closeModal">×</button>
+      </div>
+      <div class="transaction-details" id="transactionDetails">
+        <!-- Details will be populated by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // DOM Elements
+    const form = document.getElementById('transactionForm');
+    const transactionList = document.getElementById('transactionList');
+    const totalAmount = document.getElementById('totalAmount');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const exportBtn = document.getElementById('exportBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const toast = document.getElementById('toast');
+    const searchInput = document.getElementById('searchInput');
+    const detailsModal = document.getElementById('detailsModal');
+    const closeModal = document.getElementById('closeModal');
+    const transactionDetails = document.getElementById('transactionDetails');
+    const statsContainer = document.getElementById('statsContainer');
+
+    // Form fields
+    const fields = {
+      name: document.getElementById('name'),
+      amount: document.getElementById('amount'),
+      date: document.getElementById('date'),
+      paymentMode: document.getElementById('paymentMode'),
+      cardBankName: document.getElementById('cardBankName'),
+      bankTransferName: document.getElementById('bankTransferName'),
+      bankTransferBranch: document.getElementById('bankTransferBranch'),
+      bankTransferAccount: document.getElementById('bankTransferAccount'),
+      upiId: document.getElementById('upiId'),
+      otherPaymentDetails: document.getElementById('otherPaymentDetails'),
+      notes: document.getElementById('notes')
+    };
+
+    // Dynamic sections
+    const cardDetails = document.getElementById('cardDetails');
+    const bankTransferDetails = document.getElementById('bankTransferDetails');
+    const upiDetails = document.getElementById('upiDetails');
+    const otherDetails = document.getElementById('otherDetails');
+
+    // State
+    let transactions = [];
+    let backupTransactions = null;
+    let editingId = null;
+    let currentView = 'currentMonth'; // currentMonth, prevMonth, nextMonth, year
+    let searchTerm = '';
+
+    // Initialize
+    function init() {
+      setDefaultDate();
+      loadFromStorage();
+      updatePaymentDetails();
+      renderTransactions();
+      updateStats();
+      setupEventListeners();
+    }
+
+    function setDefaultDate() {
+      const today = new Date().toISOString().split('T')[0];
+      if (!fields.date.value) fields.date.value = today;
+    }
+
+    function setupEventListeners() {
+      form.addEventListener('submit', handleSubmit);
+      fields.paymentMode.addEventListener('change', updatePaymentDetails);
+
+      document.getElementById('prevMonthBtn').addEventListener('click', () => switchView('prevMonth'));
+      document.getElementById('currentMonthBtn').addEventListener('click', () => switchView('currentMonth'));
+      document.getElementById('nextMonthBtn').addEventListener('click', () => switchView('nextMonth'));
+      document.getElementById('yearBtn').addEventListener('click', () => switchView('year'));
+
+      darkModeToggle.addEventListener('click', toggleDarkMode);
+      exportBtn.addEventListener('click', exportToCSV);
+      clearBtn.addEventListener('click', handleClear);
+      searchInput.addEventListener('input', handleSearch);
+      closeModal.addEventListener('click', () => detailsModal.style.display = 'none');
+
+      // Close modal when clicking outside
+      window.addEventListener('click', (e) => {
+        if (e.target === detailsModal) detailsModal.style.display = 'none';
+      });
+
+      // Double-click to edit
+      transactionList.addEventListener('dblclick', (e) => {
+        const row = e.target.closest('tr');
+        if (row && !row.classList.contains('empty-row')) {
+          const id = parseInt(row.dataset.id);
+          if (!isNaN(id)) editTransaction(id);
+        }
+      });
+    }
+
+    function updatePaymentDetails() {
+      [cardDetails, bankTransferDetails, upiDetails, otherDetails].forEach(el => el.classList.add('hidden'));
+
+      const mode = fields.paymentMode.value;
+      if (mode === 'Card') cardDetails.classList.remove('hidden');
+      else if (mode === 'Bank Transfer') bankTransferDetails.classList.remove('hidden');
+      else if (mode === 'UPI') upiDetails.classList.remove('hidden');
+      else if (mode === 'Other') otherDetails.classList.remove('hidden');
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      if (!validateForm()) return;
+
+      const data = collectFormData();
+      if (editingId !== null) {
+        updateTransaction(editingId, data);
+      } else {
+        addTransaction(data);
+      }
+
+      saveToStorage();
+      renderTransactions();
+      updateStats();
+      resetForm();
+      showToast(editingId ? 'Transaction updated!' : 'Transaction added!');
+    }
+
+    function validateForm() {
+      const { name, amount, date, paymentMode } = fields;
+
+      if (!name.value.trim()) return showError(name, 'Name is required');
+      if (!amount.value || amount.value <= 0) return showError(amount, 'Valid amount required');
+      if (!date.value) return showError(date, 'Date is required');
+      if (!paymentMode.value) return showError(paymentMode, 'Payment mode required');
+
+      if (paymentMode.value === 'Card' && !fields.cardBankName.value.trim()) {
+        return showError(fields.cardBankName, 'Bank name required');
+      }
+      if (paymentMode.value === 'Bank Transfer') {
+        if (!fields.bankTransferName.value.trim()) return showError(fields.bankTransferName, 'Bank name required');
+        if (!fields.bankTransferBranch.value.trim()) return showError(fields.bankTransferBranch, 'Branch required');
+        if (!fields.bankTransferAccount.value.trim()) return showError(fields.bankTransferAccount, 'Account number required');
+      }
+      if (paymentMode.value === 'UPI' && !fields.upiId.value.trim()) {
+        return showError(fields.upiId, 'UPI ID required');
+      }
+      if (paymentMode.value === 'Other' && !fields.otherPaymentDetails.value.trim()) {
+        return showError(fields.otherPaymentDetails, 'Payment details required');
+      }
+
+      return true;
+    }
+
+    function showError(input, msg) {
+      alert(msg);
+      input.focus();
+      return false;
+    }
+
+    function collectFormData() {
+      return {
+        id: editingId || Date.now(),
+        name: fields.name.value.trim(),
+        amount: parseFloat(fields.amount.value),
+        date: fields.date.value,
+        paymentMode: fields.paymentMode.value,
+        cardBankName: fields.cardBankName.value.trim(),
+        bankTransferName: fields.bankTransferName.value.trim(),
+        bankTransferBranch: fields.bankTransferBranch.value.trim(),
+        bankTransferAccount: fields.bankTransferAccount.value.trim(),
+        upiId: fields.upiId.value.trim(),
+        otherPaymentDetails: fields.otherPaymentDetails.value.trim(),
+        notes: fields.notes.value.trim()
+      };
+    }
+
+    function addTransaction(data) {
+      transactions.push(data);
+    }
+
+    function updateTransaction(id, data) {
+      const idx = transactions.findIndex(t => t.id === id);
+      if (idx !== -1) transactions[idx] = data;
+      editingId = null;
+      form.querySelector('button[type="submit"]').textContent = 'Submit';
+    }
+
+    function deleteTransaction(id) {
+      if (confirm('Delete this transaction?')) {
+        transactions = transactions.filter(t => t.id !== id);
+        saveToStorage();
+        renderTransactions();
+        updateStats();
+        showToast('Transaction deleted.');
+        if (editingId === id) resetForm();
+      }
+    }
+
+    function showTransactionDetails(id) {
+      const t = transactions.find(tx => tx.id === id);
+      if (!t) return;
+
+      let detailsHTML = `
+        <div class="detail-item">
+          <div class="detail-label">Name</div>
+          <div class="detail-value">${t.name}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Amount</div>
+          <div class="detail-value">₹${t.amount.toFixed(2)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Date</div>
+          <div class="detail-value">${formatDate(t.date)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Payment Mode</div>
+          <div class="detail-value">${t.paymentMode}</div>
+        </div>
+      `;
+
+      if (t.paymentMode === 'Card' && t.cardBankName) {
+        detailsHTML += `
+          <div class="detail-item">
+            <div class="detail-label">Bank Name</div>
+            <div class="detail-value">${t.cardBankName}</div>
+          </div>
+        `;
+      } else if (t.paymentMode === 'Bank Transfer') {
+        detailsHTML += `
+          <div class="detail-item">
+            <div class="detail-label">Bank Name</div>
+            <div class="detail-value">${t.bankTransferName}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Branch</div>
+            <div class="detail-value">${t.bankTransferBranch}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Account Number</div>
+            <div class="detail-value">${t.bankTransferAccount}</div>
+          </div>
+        `;
+      } else if (t.paymentMode === 'UPI' && t.upiId) {
+        detailsHTML += `
+          <div class="detail-item">
+            <div class="detail-label">UPI ID</div>
+            <div class="detail-value">${t.upiId}</div>
+          </div>
+        `;
+      } else if (t.paymentMode === 'Other' && t.otherPaymentDetails) {
+        detailsHTML += `
+          <div class="detail-item">
+            <div class="detail-label">Payment Details</div>
+            <div class="detail-value">${t.otherPaymentDetails}</div>
+          </div>
+        `;
+      }
+
+      if (t.notes) {
+        detailsHTML += `
+          <div class="detail-item">
+            <div class="detail-label">Notes</div>
+            <div class="detail-value">${t.notes}</div>
+          </div>
+        `;
+      }
+
+      transactionDetails.innerHTML = detailsHTML;
+      detailsModal.style.display = 'flex';
+    }
+
+    function editTransaction(id) {
+      const t = transactions.find(tx => tx.id === id);
+      if (!t) return;
+
+      Object.keys(fields).forEach(key => {
+        if (fields[key] && t[key] !== undefined) fields[key].value = t[key];
+      });
+
+      updatePaymentDetails();
+      editingId = id;
+      form.querySelector('button[type="submit"]').textContent = 'Update';
+      fields.name.focus();
+    }
+
+    function switchView(view) {
+      currentView = view;
+      document.querySelectorAll('#monthNav button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`${view}Btn`).classList.add('active');
+      renderTransactions();
+    }
+
+    function filterTransactions() {
+      let filtered = transactions;
+      
+      // Apply date filter
+      const range = getDateRange(currentView);
+      if (currentView !== 'year') {
+        filtered = filtered.filter(t => {
+          const dt = new Date(t.date);
+          return dt >= range.start && dt <= range.end;
+        });
+      }
+      
+      // Apply search filter
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        filtered = filtered.filter(t => 
+          t.name.toLowerCase().includes(term) || 
+          t.paymentMode.toLowerCase().includes(term) ||
+          (t.notes && t.notes.toLowerCase().includes(term))
+        );
+      }
+      
+      return filtered;
+    }
+
+    function getDateRange(view) {
+      const today = new Date();
+      let start, end;
+
+      switch (view) {
+        case 'prevMonth':
+          start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+          end = new Date(today.getFullYear(), today.getMonth(), 0);
+          break;
+        case 'nextMonth':
+          start = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+          end = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+          break;
+        case 'year':
+          start = new Date(today.getFullYear(), 0, 1);
+          end = new Date(today.getFullYear(), 11, 31);
+          break;
+        default:
+          start = new Date(today.getFullYear(), today.getMonth(), 1);
+          end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      }
+      start.setHours(0, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
+      return { start, end };
+    }
+
+    function handleSearch(e) {
+      searchTerm = e.target.value;
+      renderTransactions();
+    }
+
+    function renderTransactions() {
+      const filtered = filterTransactions();
+      const tbody = transactionList;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr class="empty-row"><td colspan="5" class="empty-state">No transactions found.</td></tr>`;
+        totalAmount.textContent = '₹0.00';
+        return;
+      }
+
+      tbody.innerHTML = '';
+      let total = 0;
+
+      filtered.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.dataset.id = t.id;
+
+        let modeDetails = t.paymentMode;
+        if (t.cardBankName) modeDetails += `<br><small>Bank: ${t.cardBankName}</small>`;
+        else if (t.bankTransferName) modeDetails += `<br><small>Bank: ${t.bankTransferName}</small>`;
+        else if (t.upiId) modeDetails += `<br><small>UPI: ${t.upiId}</small>`;
+        else if (t.otherPaymentDetails) modeDetails += `<br><small>${t.otherPaymentDetails}</small>`;
+
+        tr.innerHTML = `
+          <td>${t.name}</td>
+          <td>₹${t.amount.toFixed(2)}</td>
+          <td>${formatDate(t.date)}</td>
+          <td>${modeDetails}</td>
+          <td class="action-btns">
+            <button class="details-btn" title="View Details">👁️</button>
+            <button class="edit-btn" title="Edit">✏️</button>
+            <button class="delete-btn" title="Delete">🗑️</button>
+          </td>
+        `;
+
+        tr.querySelector('.details-btn').addEventListener('click', () => showTransactionDetails(t.id));
+        tr.querySelector('.edit-btn').addEventListener('click', () => editTransaction(t.id));
+        tr.querySelector('.delete-btn').addEventListener('click', () => deleteTransaction(t.id));
+
+        tbody.appendChild(tr);
+        total += t.amount;
+      });
+
+      totalAmount.textContent = `₹${total.toFixed(2)}`;
+    }
+
+    function updateStats() {
+      const today = new Date();
+      const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      const currentMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      
+      // Calculate monthly total
+      const monthlyTotal = transactions
+        .filter(t => {
+          const dt = new Date(t.date);
+          return dt >= currentMonthStart && dt <= currentMonthEnd;
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+      
+      // Calculate yearly total
+      const yearlyStart = new Date(today.getFullYear(), 0, 1);
+      const yearlyEnd = new Date(today.getFullYear(), 11, 31);
+      const yearlyTotal = transactions
+        .filter(t => {
+          const dt = new Date(t.date);
+          return dt >= yearlyStart && dt <= yearlyEnd;
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+      
+      // Calculate all-time total
+      const allTimeTotal = transactions.reduce((sum, t) => sum + t.amount, 0);
+      
+      statsContainer.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Monthly Total</div>
+          <div class="stat-value">₹${monthlyTotal.toFixed(2)}</div>
+          <div class="stat-label">${new Date().toLocaleString('default', { month: 'long' })}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Yearly Total</div>
+          <div class="stat-value">₹${yearlyTotal.toFixed(2)}</div>
+          <div class="stat-label">${today.getFullYear()}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">All Time Total</div>
+          <div class="stat-value">₹${allTimeTotal.toFixed(2)}</div>
+          <div class="stat-label">All Transactions</div>
+        </div>
+      `;
+    }
+
+    function formatDate(dateStr) {
+      const [y, m, d] = dateStr.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function resetForm() {
+      form.reset();
+      setDefaultDate();
+      updatePaymentDetails();
+      editingId = null;
+      form.querySelector('button[type="submit"]').textContent = 'Submit';
+    }
+
+    function handleClear() {
+      if (clearBtn.textContent.includes('Clear')) {
+        if (confirm('Clear all transactions? This cannot be undone.')) {
+          backupTransactions = [...transactions];
+          transactions = [];
+          saveToStorage();
+          renderTransactions();
+          updateStats();
+          resetForm();
+          clearBtn.textContent = 'Restore All';
+          clearBtn.classList.remove('danger');
+          clearBtn.classList.add('success');
+          showToast('All transactions cleared.');
+        }
+      } else {
+        if (backupTransactions) {
+          transactions = [...backupTransactions];
+          saveToStorage();
+          renderTransactions();
+          updateStats();
+          backupTransactions = null;
+          clearBtn.textContent = 'Clear All';
+          clearBtn.classList.remove('success');
+          clearBtn.classList.add('danger');
+          showToast('Transactions restored.');
+        }
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      darkModeToggle.textContent = document.body.classList.contains('dark-mode') ? '☀️ Light Mode' : '🌙 Dark Mode';
+      localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+
+    function exportToCSV() {
+      const filtered = filterTransactions();
+      if (filtered.length === 0) return alert('No data to export.');
+
+      const headers = ['Name', 'Amount', 'Date', 'Payment Mode', 'Bank Name', 'Branch', 'Account Number', 'UPI ID', 'Other Details', 'Notes'];
+      const rows = filtered.map(t => {
+        return [
+          t.name,
+          t.amount,
+          t.date,
+          t.paymentMode,
+          t.cardBankName || t.bankTransferName || '',
+          t.bankTransferBranch || '',
+          t.bankTransferAccount || '',
+          t.upiId || '',
+          t.otherPaymentDetails || '',
+          t.notes || ''
+        ];
+      });
+
+      // Add quotes to handle commas in values
+      const csvContent = [
+        headers.map(h => `"${h}"`).join(','),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sun_enterprises_transactions_${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+    }
+
+    function saveToStorage() {
+      try {
+        localStorage.setItem('sun-enterprises-transactions', JSON.stringify(transactions));
+      } catch (e) {
+        console.error('Storage error:', e);
+        showToast('Error saving data!');
+      }
+    }
+
+    function loadFromStorage() {
+      try {
+        const stored = localStorage.getItem('sun-enterprises-transactions');
+        if (stored) transactions = JSON.parse(stored);
+        
+        // Load dark mode preference
+        const darkModePref = localStorage.getItem('darkMode');
+        if (darkModePref === 'true') {
+          document.body.classList.add('dark-mode');
+          darkModeToggle.textContent = '☀️ Light Mode';
+        }
+      } catch (e) {
+        console.error('Load error:', e);
+        showToast('Error loading saved data!');
+      }
+    }
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Initialize on load
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>
